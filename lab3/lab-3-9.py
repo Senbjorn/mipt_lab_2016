@@ -19,7 +19,8 @@ for i in range(n):
 	turtle.left(90 - 180 * (m - 2) / m / 2)
 	polydraw(m, a)
 	turtle.right(180 - 180 * (m - 2) / m / 2)
-	dr = a / math.sin(math.pi / (m + 1)) / 2 - a / math.sin(math.pi / m) / 2
+	dr = (a + 10) / math.sin(math.pi / (m + 1)) / 2 - a / math.sin(math.pi / m) / 2
+	a += 10
 	turtle.penup()
 	turtle.forward(dr)
 	turtle.pendown()
