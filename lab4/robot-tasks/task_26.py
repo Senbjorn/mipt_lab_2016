@@ -4,17 +4,17 @@ from pyrob.api import *
 
 
 @task(delay=0.02)
-def task_2_4(): 
-	fill()
+def task_2_4():
 	for m in range(5):
+		fill()
 		for k in range(9):
 			move_right(n = 4)
 			fill()
 		for k in range(9):
 			move_left(n = 4)
-		if (k != 5) {
+		if m != 4:
 			move_down(n = 4)
-		}
+
 def fill():
 	move_down()
 	fill_cell()
