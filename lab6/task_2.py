@@ -7,9 +7,11 @@ def function(x):
 	else:
 		return 0
 
-n = 1000000000
+
+n = 1000
 a = -3
 b = 3
+print(B)
 val = [function(r.uniform(a, b)) for i in range(n)]
 answer = (b - a) / n * sum(val)
 print(answer)
