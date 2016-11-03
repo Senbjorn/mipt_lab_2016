@@ -21,7 +21,6 @@ class ball():
         x - начальное положение мяча по горизонтали
         y - начальное положение мяча по вертикали
         """
-        self.livetime = 0
         self.x = x
         self.y = y
         self.r = 10
@@ -34,31 +33,30 @@ class ball():
     def set_coords(self):
         canv.coords(self.id, self.x-self.r, self.y-self.r, self.x+self.r, self.y+self.r)
 
-    def move(self, z):
+    def move(self, z, k):
         """ Метод move описывает перемещение мяча за один кадр перерисовки. То есть, обновляет значения 
         self.x и self.y с учетом скоростей self.vx и self.vy, силы гравитации, действующей на мяч,
             и стен по краям окна (размер окна 800х600).
         """
         #FIXME
-        self.vy += z
-        if self.x > 800 or self.x < 0:
+        if (self.x > 800 and self.vx > 0) or (self.x < 0 and self.vx < 0):
             self.vx = -self.vx
-        if self.y > 600:
+        if self.y < 0 and self.vy > 0:
             self.vy = -self.vy
-        if  self.y < 0:
-            self.vy = -self.vy
+            flag = False
+        if  self.y > 600 and self.vy < 0:
+            self.vy = -self.vy * k
+            self.vx *= k
+        if self.y < 600:
+            self.vy += z
         self.x += self.vx
         self.y -= self.vy
         self.set_coords()
-        # self.id = canv.create_oval(self.x-self.r, self.y-self.r, self.x+self.r, self.y+self.r, fill=self.color)
 
     def hittest(self,ob):
         if (self.x - ob.x) ** 2 + (self.y - ob.y) ** 2 < (self.r + ob.r) ** 2:
             return True
         return False
-
-    def tick(self):
-        self.livetime += 1
 
 
 class gun():
@@ -151,27 +149,25 @@ def new_game(event=''):
     canv.bind('<ButtonRelease-1>', g1.fire2_end)
     canv.bind('<Motion>', g1.targetting)
     z = -1.13
+    k = 0.50
     t1.live = 1
     t2.live = 1
     while t1.live or balls or t2.live:
         for b in balls:
-            b.move(z)
-            b.tick()
+            b.move(z, k)
             if b.hittest(t1) and t1.live:
                 t1.live = 0
                 t1.hit()
-                canv.bind('<Button-1>', '')
-                canv.bind('<ButtonRelease-1>', '')
-                canv.itemconfig(screen1, text = 'Вы уничтожили цель за 1' + str(bullet) + ' выстрелов')
             if b.hittest(t2) and t2.live:
                 t2.live = 0
                 t2.hit()
+            if not t2.live and not t1.live:
                 canv.bind('<Button-1>', '')
                 canv.bind('<ButtonRelease-1>', '')
-                canv.itemconfig(screen1, text = 'Вы уничтожили цель за 2' + str(bullet) + ' выстрелов')
+                canv.itemconfig(screen1, text = 'Вы уничтожили цели за' + str(bullet) + ' выстрелов')
         n = 0
         while n < len(balls):
-            if balls[n].livetime >= 100:
+            if abs(balls[n].vx) <= abs(z) and abs(balls[n].vy) <= abs(z) and balls[n].y > 599:
                 canv.delete(balls[n].id)
                 balls.pop(n)
                 continue
