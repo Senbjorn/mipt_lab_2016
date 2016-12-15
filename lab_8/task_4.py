@@ -15,9 +15,8 @@ def trnaslate(s, D):
 	for i in range(len(A)):
 		if not A[i][-1].isalpha():
 			s1 = A[i][0:-1]
-			print(s)
 			if A[i][0:-1] in D:
-				A[i] = D[A[i][0:-1]] + A[-1]
+				A[i] = D[A[i][0:-1]] + A[i][-1]
 		elif A[i] in D:
 			A[i] = D[A[i]]
 	return ' '.join(A)

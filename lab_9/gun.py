@@ -14,19 +14,22 @@ canv.pack(fill=BOTH,expand=1)
 
 class ball():
     """ Класс ball описывает мяч. """
-
+    global balls
     def __init__(self,x=40,y=450):
         """ Конструктор класса ball
         Args:
         x - начальное положение мяча по горизонтали
         y - начальное положение мяча по вертикали
         """
+        self.avx = 100
+        self.avy = 100
+        self.time = 0
         self.x = x
         self.y = y
         self.r = 10
         self.vx = 0
         self.vy = 0
-        self.color = choice(['blue','green','red','brown'])
+        self.color = choice(['blue','green','red','brown', 'black'])
         self.id = canv.create_oval(self.x-self.r, self.y-self.r, self.x+self.r, self.y+self.r, fill=self.color)
         self.live = 30
 
@@ -39,19 +42,28 @@ class ball():
             и стен по краям окна (размер окна 800х600).
         """
         #FIXME
+        if self.vy <= 597:
+            self.vy += z
+        self.time += 1
+        self.avy = (self.avy * (self.time - 1) + abs(self.vy)) / self.time if self.time != 1 else abs(self.vy)
+        self.avx = (self.avx * (self.time - 1) + abs(self.vx)) / self.time if self.time != 1 else abs(self.vx)
         if (self.x > 800 and self.vx > 0) or (self.x < 0 and self.vx < 0):
             self.vx = -self.vx
         if self.y < 0 and self.vy > 0:
             self.vy = -self.vy
-            flag = False
         if  self.y > 600 and self.vy < 0:
-            self.vy = -self.vy * k
-            self.vx *= k
-        if self.y < 600:
-            self.vy += z
+            self.vy = -self.vy
+        if self.y > 597:
+            self.vy -= self.vy * k
+            self.vx -= self.vx * k
         self.x += self.vx
         self.y -= self.vy
         self.set_coords()
+
+    def remballs(self):
+        if self.avy <= 0.01 and self.avx <= 0.01:
+            balls.remove(self)
+            canv.delete(self.id)
 
     def hittest(self,ob):
         if (self.x - ob.x) ** 2 + (self.y - ob.y) ** 2 < (self.r + ob.r) ** 2:
@@ -109,28 +121,27 @@ class gun():
         
 class target():
     """ Класс target описывает цель. """
+    global points
     def __init__(self):
-        self.points = 0
         self.live = 1
         self.id = canv.create_oval(0,0,0,0)
-        self.id_points = canv.create_text(30,30,text = self.points,font = '28')
          
     def new_target(self):
         """ Инициализация новой цели. """
         x = self.x = rnd(600,780)
         y = self.y = rnd(300,550)
         r = self.r = rnd(2,50)
-        color = self.color = 'red'
+        color = self.color = 'green'
         canv.coords(self.id, x-r,y-r,x+r,y+r)
         canv.itemconfig(self.id, fill = color)
          
     def hit(self,points = 1):
         """ Попадание шарика в цель. """
         canv.coords(self.id,-10,-10,-10,-10)
-        self.points += points
-        canv.itemconfig(self.id_points, text = self.points)
+        points += points
 
-
+points = 0
+id_points = canv.create_text(30, 30, text = str(points), font = '28')
 t1 = target()
 t2 = target()
 screen1 = canv.create_text(400,300, text = '',font = '28')
@@ -141,7 +152,7 @@ balls = []
 
 
 def new_game(event=''):
-    global gun, t1, t2, screen1, balls, bullet
+    global gun, t1, t2, screen1, balls, bullet, points, id_points
     t1.new_target()
     t2.new_target()
     balls = []
@@ -164,14 +175,13 @@ def new_game(event=''):
             if not t2.live and not t1.live:
                 canv.bind('<Button-1>', '')
                 canv.bind('<ButtonRelease-1>', '')
-                canv.itemconfig(screen1, text = 'Вы уничтожили цели за' + str(bullet) + ' выстрелов')
+                canv.itemconfig(screen1, text = 'Вы уничтожили цели за ' + str(bullet) + ' выстрелов')
+            b.remballs()
         n = 0
         while n < len(balls):
-            if abs(balls[n].vx) <= abs(z) and abs(balls[n].vy) <= abs(z) and balls[n].y > 599:
-                canv.delete(balls[n].id)
-                balls.pop(n)
-                continue
+            
             n += 1
+        canv.itemconfig(id_points, text = str(points))
         canv.update()
         time.sleep(0.03)
         g1.targetting()

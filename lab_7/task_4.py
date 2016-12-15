@@ -14,12 +14,12 @@ def check_path(path, f, i, e, a):
 		return False
 	return True
 
-def fromat_print(path, n, offset):
+def fromat_print(path, n, offset, last = False):
 	s0 = ''
 	for i in range(offset):
 		if i != offset - 1:
 			s0 += '│    '
-		else:
+		elif last:
 			s0 += '├─── '
 	if n:
 		print(s0, path, sep = '')
@@ -99,4 +99,4 @@ print_tree(1,
 	args.full_name
 )
 os.system('')
-print("\033[91mКрасный \033[0m ...")
+# print("\033[91mКрасный \033[0m ...")

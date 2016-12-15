@@ -17,7 +17,7 @@ turtle.speed(1000)
 turtle.penup()
 turtle.goto(-200, 0)
 turtle.pendown()
-m = 5
+m = 3
 k = 300
 cock(k, m)
 turtle.right(120)
