@@ -11,12 +11,13 @@ for s in list_of_lines:
 	a, b, w = tuple(s.split())
 	w = float(w)
 	graph.add_edge(a, b, weight = w)
-pos = nx.spring_layout(graph)
-labels={i:"aaa" for i in graph.nodes()}
+pos = nx.circular_layout(graph)
+nodes = graph.nodes()
+labels={nodes[i]:i + 1 for i in range(len(nodes))}
 nx.draw_networkx_nodes(graph, pos,
-                       node_color='b',
-                       node_size=500,
-                   alpha=0.8)
-nx.draw_networkx_edges(graph, pos, width=8, alpha=0.5, edge_color='g')
-nx.draw_networkx_labels(graph, pos, labels, font_size=16)
+                       node_color='b')
+nx.draw_networkx_edges(graph, pos,
+						edge_color='g')
+nx.draw_networkx_labels(graph, pos,
+						labels = labels)
 plt.show()
