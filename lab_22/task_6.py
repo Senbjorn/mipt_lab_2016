@@ -1,5 +1,4 @@
 #task_6
-#task_4
 
 class Node:
 	def __init__(self, data):
@@ -67,19 +66,6 @@ class Tree:
 		T2.root = self.root.right
 		return max(T1.height(h + 1), T2.height(h + 1))
 
-	def bfs(self):
-		ind = 0
-		Q = [self.root]
-		while ind < Q.length():
-			node = Q[ind]
-			ind += 1
-			if not node.left is None:
-				Q.append(node.left)
-			if not node.right is None:
-				Q.append(node.right)
-		print(*[q.data for q in Q])
-
-
 	def print(self):
 		if self.root is None:
 			return
@@ -93,4 +79,4 @@ class Tree:
 tree = Tree()
 for x in list(map(int, input().split())):
 	tree.add(x)
-tree.bfs()
+tree.print()
